@@ -1,56 +1,50 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { AppConfig, UserSession, showConnect } from '@stacks/connect-react';
+import { connect, disconnect, isConnected, getLocalStorage, request } from '@stacks/connect';
 
 interface WalletContextType {
-  userSession: UserSession;
   isConnected: boolean;
   userData: any;
-  connectWallet: () => void;
+  connectWallet: () => Promise<void>;
   disconnectWallet: () => void;
 }
 
 const WalletContext = createContext<WalletContextType | undefined>(undefined);
 
-const appConfig = new AppConfig(['store_write', 'publish_data']);
-const userSession = new UserSession({ appConfig });
-
 export const WalletProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [isConnected, setIsConnected] = useState(false);
+  const [connected, setConnected] = useState(false);
   const [userData, setUserData] = useState<any>(null);
 
   useEffect(() => {
-    if (userSession.isUserSignedIn()) {
-      setIsConnected(true);
-      setUserData(userSession.loadUserData());
+    if (isConnected()) {
+      const data = getLocalStorage();
+      setConnected(true);
+      setUserData(data);
     }
   }, []);
 
-  const connectWallet = () => {
-    showConnect({
-      appDetails: {
-        name: 'Stacks Marketplace',
-        icon: window.location.origin + '/placeholder.svg',
-      },
-      redirectTo: '/',
-      onFinish: () => {
-        setIsConnected(true);
-        setUserData(userSession.loadUserData());
-      },
-      userSession,
-    });
+  const connectWallet = async () => {
+    if (isConnected()) {
+      console.log('Already connected');
+      return;
+    }
+
+    const response = await connect();
+    console.log('Connected:', response.addresses);
+    setConnected(true);
+    setUserData(response);
   };
 
   const disconnectWallet = () => {
-    userSession.signUserOut();
-    setIsConnected(false);
+    disconnect();
+    setConnected(false);
     setUserData(null);
+    console.log('User disconnected');
   };
 
   return (
     <WalletContext.Provider
       value={{
-        userSession,
-        isConnected,
+        isConnected: connected,
         userData,
         connectWallet,
         disconnectWallet,
@@ -63,8 +57,6 @@ export const WalletProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
 export const useWallet = () => {
   const context = useContext(WalletContext);
-  if (context === undefined) {
-    throw new Error('useWallet must be used within a WalletProvider');
-  }
+  if (!context) throw new Error('useWallet must be used within a WalletProvider');
   return context;
 };

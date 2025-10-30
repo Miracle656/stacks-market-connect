@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { useWallet } from '@/contexts/WalletContext';
 import { useCart } from '@/contexts/CartContext';
 import { ShoppingCart, Wallet } from 'lucide-react';
+import smlogo from '@/assets/smlogo.png';
 
 const Navbar = () => {
   const location = useLocation();
@@ -20,7 +21,8 @@ const Navbar = () => {
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center gap-8">
           <Link to="/" className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary to-[hsl(var(--primary-glow))]" />
+            <img src={smlogo} alt="StacksMarket Logo" className="h-8 w-8" />
+            {/* <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary to-[hsl(var(--primary-glow))]" /> */}
             <span className="text-xl font-bold">StacksMarket</span>
           </Link>
 

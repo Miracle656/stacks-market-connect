@@ -76,7 +76,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="flex items-center justify-between">
-          <span className="text-2xl font-bold text-primary">{product.price} STX</span>
+          <span className="text-2xl font-bold text-[#fc6432]">{product.price} STX</span>
           <span className="text-sm text-muted-foreground">{product.units} available</span>
         </div>
 
@@ -117,7 +117,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
           <ShoppingCart className="h-4 w-4" />
           Add to Cart
         </Button>
-        <Button variant="default" className="flex-1" onClick={handleBuyNow}>
+        <Button className="flex-1 bg-[#fc6432]" onClick={handleBuyNow}>
           Buy Now
         </Button>
       </CardFooter>
